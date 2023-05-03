@@ -39,8 +39,8 @@ def pep(session):
             abbr_tg = pep_content.find_all('abbr')
             pep_status_card = abbr_tg[0].text
             pep_status_list = text_title.group(2)
-            pep_status[pep_status_card] = pep_status.get(pep_status_card, 0) + 1
-            
+            pep_status[pep_status_card] = pep_status.get(pep_status_card, 
+                                                         0) + 1
             if pep_status_list != pep_status_card:
                 logging.info(
                     f'Несовпадающие статусы: {url_one}. '
