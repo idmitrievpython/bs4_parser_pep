@@ -2,10 +2,10 @@ import csv
 import logging
 import re
 import requests_cache
+
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from tqdm import tqdm
-
 from configs import configure_argument_parser, configure_logging
 from constants import (
     BASE_DIR,
@@ -39,13 +39,8 @@ def pep(session):
             abbr_tg = pep_content.find_all('abbr')
             pep_status_card = abbr_tg[0].text
             pep_status_list = text_title.group(2)
-
-            if pep_status_card in pep_status:
-                pep_status[pep_status_card] += 1
-            else:
-                pep_status[pep_status_card] = 1
-            pep_status['total'] += 1
-
+            pep_status[pep_status_card] = pep_status.get(pep_status_card, 0) + 1
+            
             if pep_status_list != pep_status_card:
                 logging.info(
                     f'Несовпадающие статусы: {url_one}. '
@@ -53,8 +48,8 @@ def pep(session):
                     f'Ожидаемые статусы: ["{pep_status_list}"]'
                 )
     pep_status_dict = []
-    for i in pep_status:
-        pep_status_dict.append([i, pep_status[i]])
+    for status in pep_status:
+        pep_status_dict.extend([status, pep_status[status]])
 
     downloads_dir = BASE_DIR / 'results'
     downloads_dir.mkdir(exist_ok=True)
@@ -114,8 +109,8 @@ def latest_versions(session):
         if 'All version' in ul.text:
             a_tags = ul.find_all('a')
             break
-        else:
-            raise Exception('Тэг <a> с текстом "All version" не найден')
+    else:
+        raise Exception('Тэг <a> с текстом "All version" не найден')
 
     results = LATEST_VERSION_RESULT
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'
