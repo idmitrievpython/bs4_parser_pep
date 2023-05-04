@@ -48,8 +48,7 @@ def pep(session):
                     f'Ожидаемые статусы: ["{pep_status_list}"]'
                 )
     pep_status_dict = []
-    for status in pep_status:
-        pep_status_dict.extend([status, pep_status[status]])
+    pep_status_dict.extend(pep_status.items())
 
     downloads_dir = BASE_DIR / 'results'
     downloads_dir.mkdir(exist_ok=True)
